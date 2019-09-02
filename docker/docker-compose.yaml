@@ -1,0 +1,39 @@
+version: "3.2"
+
+services:
+
+  mysql:
+    image: mysql:5.6
+    restart: on-failure
+    volumes:
+      - type: bind
+        source: ./data/mysql
+        target: /var/lib/mysql
+      - type: bind
+        source: ../webapp/node-mysql-crud-app/create_table.sql
+        target: /docker-entrypoint-initdb.d/create_table.sql
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_USER=dpuser
+      - MYSQL_PASSWORD=dppassed
+      - MYSQL_DATABASE=dp
+
+  webapp:
+    image: dp_webapp
+    restart: on-failure
+    volumes:
+      - type: bind
+        source: ./data/webapp
+        target: /node-mysql-crud-app/public/assets/img
+    environment:
+      - DB_URL=mysql://dpuser:dppassed@mysql/dp
+
+  nginx:
+    image: nginx:1.17.3
+    ports:
+    - "80:80"
+    restart: on-failure
+    volumes:
+      - type: bind
+        source: ./nginx.conf
+        target: /etc/nginx/nginx.conf
