@@ -5,5 +5,6 @@ docker run \
 -e MYSQL_ROOT_PASSWORD=root \
 -e MYSQL_USER=dpuser \
 -e MYSQL_PASSWORD=dppassed \
+-e MYSQL_DATABASE=dp \
 -d mysql:5.6
 
