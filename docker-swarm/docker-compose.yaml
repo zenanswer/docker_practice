@@ -1,0 +1,94 @@
+version: "3.7"
+
+services:
+  mysql:
+    image: mysql:5.6
+    deploy:
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints: [node.role == manager]
+    volumes:
+      - type: bind
+        source: ./data/mysql
+        target: /var/lib/mysql
+      - type: bind
+        source: ../webapp/node-mysql-crud-app/create_table.sql
+        target: /docker-entrypoint-initdb.d/create_table.sql
+      - type: bind
+        source: ../docker/checkiftablexists.sh
+        target: /checkiftablexists.sh
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_USER=dpuser
+      - MYSQL_PASSWORD=dppassed
+      - MYSQL_DATABASE=dp
+    healthcheck:
+      test: ["CMD", "bash", "/checkiftablexists.sh" ,"dp", "players"]
+      start_period: 30s
+      interval: 5s
+      timeout: 3s
+      retries: 4
+    networks:
+      - app_network
+
+  webapp:
+    image: dp_webapp
+    deploy:
+      replicas: 3
+      restart_policy:
+        condition: on-failure
+    depends_on:
+      - mysql
+    volumes:
+      - type: volume
+        source: app-img-data
+        target: /node-mysql-crud-app/public/assets/img
+    configs:
+      - source: healthcheck_js
+        target: /healthcheck.js
+        mode: 0755
+    environment:
+      - DB_URL=mysql://dpuser:dppassed@mysql/dp
+    healthcheck:
+      test: ["CMD", "node", "/healthcheck.js"]
+      start_period: 10s
+      interval: 2s
+      timeout: 3s
+      retries: 4
+    networks:
+      - app_network
+
+  nginx:
+    image: nginx:1.17.3
+    ports:
+    - "80:80"
+    restart: on-failure
+    configs:
+      - source: nginx_conf
+        target: /etc/nginx/nginx.conf
+        mode: 0440
+    depends_on:
+      - webapp
+    networks:
+      - app_network
+
+configs:
+  healthcheck_js:
+    file: ../docker/healthcheck.js
+  nginx_conf:
+    file: ../docker/nginx.conf
+  # one_external_config:
+  #   external: true
+
+# secrets:
+#   one_external_secret:
+#     external: true
+
+volumes:
+  app-img-data:
+
+networks:
+  app_network:
+    driver: overlay
+    attachable: true
