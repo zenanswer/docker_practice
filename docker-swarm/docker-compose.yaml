@@ -63,7 +63,9 @@ services:
     image: nginx:1.17.3
     ports:
     - "80:80"
-    restart: on-failure
+    deploy:
+      restart_policy:
+        condition: on-failure
     configs:
       - source: nginx_conf
         target: /etc/nginx/nginx.conf
