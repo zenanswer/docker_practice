@@ -1,0 +1,13 @@
+version: "3.7"
+
+services:
+  nettools:
+    image: raesene/alpine-nettools
+    networks:
+      - app_network
+      
+networks:
+  app_network:
+    name: dptest_app_network
+    external: true
+
