@@ -38,8 +38,6 @@ services:
       replicas: 3
       restart_policy:
         condition: on-failure
-    depends_on:
-      - mysql
     volumes:
       - type: volume
         source: app-img-data
@@ -70,8 +68,6 @@ services:
       - source: nginx_conf
         target: /etc/nginx/nginx.conf
         mode: 0440
-    depends_on:
-      - webapp
     networks:
       - app_network
 
