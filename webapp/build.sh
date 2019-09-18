@@ -1,1 +1,1 @@
-docker build ./ -f Dockerfile -t dp_webapp
+docker build ./ -f Dockerfile -t dp_webapp:latest
