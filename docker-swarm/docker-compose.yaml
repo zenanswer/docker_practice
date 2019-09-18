@@ -56,6 +56,11 @@ services:
       retries: 4
     networks:
       - app_network
+      - loki_network
+    logging:
+      driver: loki
+      options:
+        loki-url: "http://SWARM-FQDN-OR-IP:3100/api/prom/push"
 
   nginx:
     image: nginx:1.17.3
@@ -90,3 +95,6 @@ networks:
   app_network:
     driver: overlay
     attachable: true
+  loki_network:
+    name: log_loki_network
+    external: true

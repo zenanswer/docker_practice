@@ -1,0 +1,22 @@
+version: "3.7"
+
+networks:
+  loki_network:
+    driver: overlay
+    attachable: true
+
+services:
+  loki:
+    image: grafana/loki:latest
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - loki_network
+
+  grafana:
+    image: grafana/grafana:master
+    ports:
+      - "3000:3000"
+    networks:
+      - loki_network
