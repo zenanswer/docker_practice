@@ -6,13 +6,18 @@ How to use docker's CLI, Dockerfile and docker-compose file and docker-compose t
 
 ```text
 .
-├── docker.pdf   # slides
-├── docker-swarm.pdf # slides for swarm
-├── docker       # docker-compose practice
-├── docker-swarm # docker swarm practice
-├── mysql        # docker cli practice
+├── docker.pdf            # slides for docker cli and docker-compose
+├── docker-swarm.pdf      # slides for docker swarm
+├── docker                
+│   └── docker-compose.yaml           # docker-compose practice
+├── docker-swarm                      # docker swarm practice
+│   ├── docker-compose-log.yaml       # loki & grafana
+│   ├── docker-compose-nettools.yaml  # demo for attach network
+│   ├── docker-compose.yaml           # nginx + 3 web app + mysql
+│   └── run.sh                        # how to deploy those docker stack
+├── mysql
 ├── nginx
-└── webapp       # Dockerfile and cli practice
+└── webapp                # Dockerfile and cli practice
 ```
 
 # Dockerfile
