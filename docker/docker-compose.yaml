@@ -4,15 +4,9 @@ services:
     image: mysql:5.6
     restart: on-failure
     volumes:
-      - type: bind
-        source: ./data/mysql
-        target: /var/lib/mysql
-      - type: bind
-        source: ../webapp/node-mysql-crud-app/create_table.sql
-        target: /docker-entrypoint-initdb.d/create_table.sql
-      - type: bind
-        source: ./checkiftablexists.sh
-        target: /checkiftablexists.sh
+      - ./data/mysql:/var/lib/mysql
+      - ../webapp/node-mysql-crud-app/create_table.sql:/docker-entrypoint-initdb.d/create_table.sql
+      - ./checkiftablexists.sh:/checkiftablexists.sh
     environment:
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_USER=dpuser
@@ -28,12 +22,8 @@ services:
     image: dp_webapp
     restart: on-failure
     volumes:
-      - type: bind
-        source: ./data/webapp
-        target: /node-mysql-crud-app/public/assets/img
-      - type: bind
-        source: ./healthcheck.js
-        target: /healthcheck.js
+      - ./data/webapp:/node-mysql-crud-app/public/assets/img
+      - ./healthcheck.js:/healthcheck.js
     environment:
       - DB_URL=mysql://dpuser:dppassed@mysql/dp
     healthcheck:
@@ -52,9 +42,7 @@ services:
     - "80:80"
     restart: on-failure
     volumes:
-      - type: bind
-        source: ./nginx.conf
-        target: /etc/nginx/nginx.conf
+      - ./nginx.conf:/etc/nginx/nginx.conf
     depends_on:
       webapp:
         condition: service_healthy
